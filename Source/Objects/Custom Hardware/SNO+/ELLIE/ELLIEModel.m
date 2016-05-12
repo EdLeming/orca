@@ -92,7 +92,7 @@ smellieDBReadInProgress = _smellieDBReadInProgress;
     self = [super init];
     if (self){
         _tellieClient = [[XmlrpcClient alloc] initWithHostName:@"daq1" withPort:@"5030"];
-        _smellieClient = [[XmlrpcClient alloc] initWithHostName:@"snodrop2" withPort:@"5020"];
+        _smellieClient = [[XmlrpcClient alloc] initWithHostName:@"localhost" withPort:@"5020"];
         [_smellieClient setTimeout:60];
     }
     return self;
@@ -104,7 +104,7 @@ smellieDBReadInProgress = _smellieDBReadInProgress;
 
     if (self){
         _tellieClient = [[XmlrpcClient alloc] initWithHostName:@"daq1" withPort:@"5030"];
-        _smellieClient = [[XmlrpcClient alloc] initWithHostName:@"snodrop2" withPort:@"5020"];
+        _smellieClient = [[XmlrpcClient alloc] initWithHostName:@"localhost" withPort:@"5020"];
         [_smellieClient setTimeout:60];
     }
     return self;
@@ -943,9 +943,9 @@ smellieDBReadInProgress = _smellieDBReadInProgress;
     // FIND AND LOAD RELEVANT CONFIG
     //
     NSNumber* configVersionNo;
-    if([smellieSettings objectForKey:@"config_name"]){
-        configVersionNo = [self fetchConfigVersionFor:[smellieSettings objectForKey:@"config_name"]];
-        NSLogColor([NSColor redColor], @"Loading config file: %@\n", [smellieSettings objectForKey:@"config_name"]);
+    if([smellieSettings objectForKey:@"confg_name"]){
+        NSLogColor([NSColor redColor], @"Loading config file: %@\n", [smellieSettings objectForKey:@"run_name"]);
+        configVersionNo = [self fetchConfigVersionFor:[smellieSettings objectForKey:@"run_name"]];
     } else {
         configVersionNo = [self fetchRecentConfigVersion];
         NSLogColor([NSColor redColor], @"Loading config file: %i\n", [configVersionNo intValue]);
@@ -1585,20 +1585,17 @@ err:
     NSDictionary* entries = [json objectForKey:@"rows"];
     for(NSDictionary* entry in entries){
         if([[entry valueForKey:@"value"] valueForKey:@"config_name"]){
+            NSLog(@"%@\n",[[entry valueForKey:@"value"] valueForKey:@"config_name"]);
             NSString* configName = [NSString stringWithFormat:@"%@",[[entry valueForKey:@"value"] valueForKey:@"config_name"]];
             if([configName isEqualToString:name]){
                 NSString* stringValueOfCurrentVersion = [NSString stringWithFormat:@"%@",[entry valueForKey:@"key"]];
-                return [stringValueOfCurrentVersion intValue];
+                NSLog(@"%@\n", stringValueOfCurrentVersion); 
+                return [NSNumber numberWithInt:[stringValueOfCurrentVersion intValue]];
             }
         }
     }
-    NSString* reason = [NSString stringWithFormat:@"*** Cannot find a smellie config file with name %@", name];
-    NSException* e = [NSException
-                      exceptionWithName:@"noConfigForName"
-                      reason:reason
-                      userInfo:nil];
-    [e raise];
-    return nil;
+    NSLogColor([NSColor redColor], @"WARNING: No config file found for %@\n", name);
+    return [self fetchRecentConfigVersion];
 }
 
 -(NSMutableDictionary*) fetchConfigurationFile:(NSNumber*)currentVersion
@@ -1646,6 +1643,7 @@ err:
             }
         }
     }
+    NSLog(@"setSmellieLaserHeadToSepiaMapping: %@\n", laserHeadToSepiaMapping);
     [self setSmellieLaserHeadToSepiaMapping:laserHeadToSepiaMapping];
     [laserHeadToSepiaMapping release];
 
@@ -1660,13 +1658,13 @@ err:
             }
         }
     }
+    NSLog(@"setSmellieLaserHeadToGainMapping: %@\n", laserHeadToGainControlMapping);
     [self setSmellieLaserHeadToGainMapping:laserHeadToGainControlMapping];
     [laserHeadToGainControlMapping release];
 
     //Set laser to input fibre mapping
     NSMutableDictionary *laserToInputFibreMapping = [[NSMutableDictionary alloc] initWithCapacity:10];
     for (id specificConfigValue in configForSmellie){
-
         if([specificConfigValue isEqualToString:[NSString stringWithFormat:@"laserInput0"]]
            || [specificConfigValue isEqualToString:[NSString stringWithFormat:@"laserInput1"]]
            || [specificConfigValue isEqualToString:[NSString stringWithFormat:@"laserInput2"]]
@@ -1674,7 +1672,7 @@ err:
            || [specificConfigValue isEqualToString:[NSString stringWithFormat:@"laserInput4"]]
            || [specificConfigValue isEqualToString:[NSString stringWithFormat:@"laserInput5"]]){
             NSString *fibreSwitchInputConnected = [[configForSmellie objectForKey:specificConfigValue] objectForKey:@"fibreSwitchInputConnected"];
-            NSNumber* parsedFibreReference = [NSNumber numberWithInt:[fibreSwitchInputConnected stringByReplacingOccurrencesOfString:@"Channel" withString:@""]];
+            NSNumber* parsedFibreReference = [NSNumber numberWithInt:[[fibreSwitchInputConnected stringByReplacingOccurrencesOfString:@"Channel" withString:@""] intValue]];
             NSString * laserHeadReference = [[configForSmellie objectForKey:specificConfigValue] objectForKey:@"laserHeadConnected"];
             [laserToInputFibreMapping setObject:parsedFibreReference forKey:laserHeadReference];
         }
@@ -1694,8 +1692,6 @@ err:
     }
     [self setSmellieFibreSwitchToFibreMapping:fibreSwitchOutputToFibre];
     [fibreSwitchOutputToFibre release];
-    NSLog(@"Config for smellie: %@\n", configForSmellie);
-    NSLog(@"Fibre switch output: %@\n", fibreSwitchOutputToFibre);
     return configForSmellie;
 }
 
