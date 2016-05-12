@@ -91,8 +91,8 @@ smellieDBReadInProgress = _smellieDBReadInProgress;
 {
     self = [super init];
     if (self){
-        _tellieClient = [[XmlrpcClient alloc] initWithHostName:@"localhost" withPort:@"5030"];
-        _smellieClient = [[XmlrpcClient alloc] initWithHostName:@"localhost" withPort:@"5020"];
+        _tellieClient = [[XmlrpcClient alloc] initWithHostName:@"daq1" withPort:@"5030"];
+        _smellieClient = [[XmlrpcClient alloc] initWithHostName:@"snodrop2" withPort:@"5020"];
         [_smellieClient setTimeout:60];
     }
     return self;
@@ -103,8 +103,8 @@ smellieDBReadInProgress = _smellieDBReadInProgress;
     self = [super initWithCoder:aCoder];
 
     if (self){
-        _tellieClient = [[XmlrpcClient alloc] initWithHostName:@"localhost" withPort:@"5030"];
-        _smellieClient = [[XmlrpcClient alloc] initWithHostName:@"localhost" withPort:@"5020"];
+        _tellieClient = [[XmlrpcClient alloc] initWithHostName:@"daq1" withPort:@"5030"];
+        _smellieClient = [[XmlrpcClient alloc] initWithHostName:@"snodrop2" withPort:@"5020"];
         [_smellieClient setTimeout:60];
     }
     return self;
@@ -1045,7 +1045,8 @@ smellieDBReadInProgress = _smellieDBReadInProgress;
             }
 
             NSString *inputFibreSwitchChannel = [NSString stringWithFormat:@"%@",[[self smellieLaserToInputFibreMapping] objectForKey:laserKey]];
-
+            NSLog(@"Input fibre switch: %@\n", inputFibreSwitchChannel);
+            
             NSString* popUpMessage = [NSString stringWithFormat:@"About to set the fibre switch:\nInput Channel %@\n, Laser %@, Output Channel %@\n",inputFibreSwitchChannel,laserKey,[NSString stringWithFormat:@"%@",[[self smellieFibreSwitchToFibreMapping] objectForKey:fibreKey]]];
             ORRunAlertPanel(@"SMELLIE HARDWARE WATCH",popUpMessage,@"OK",nil,nil);
             NSLog(@"SMELLIE_RUN:Setting the Fibre Switch to Input Channel:%@ from the %@ Laser and Output Channel %@\n",inputFibreSwitchChannel,laserKey,[NSString stringWithFormat:@"%@",[[self smellieFibreSwitchToFibreMapping] objectForKey:fibreKey]]);
@@ -1101,12 +1102,12 @@ smellieDBReadInProgress = _smellieDBReadInProgress;
                     [valuesToFillPerSubRun setObject:[NSNumber numberWithInt:0] forKey:@"intensity"];
                     [valuesToFillPerSubRun setObject:lowBin forKey:@"wavelength_low_edge"];
                     [valuesToFillPerSubRun setObject:highBin forKey:@"wavelength_high_edge"];
-		    @try{
-		      [self setSuperKWavelegth:lowBinAsString withHighEdge:highBinAsString];
-		    } @catch (NSException *e) {
-		      NSLogColor([NSColor redColor], @" Problem setting superK wavelength.\n");
-		      goto err;
-		    } 
+                    @try{
+                        [self setSuperKWavelegth:lowBinAsString withHighEdge:highBinAsString];
+                    } @catch (NSException *e) {
+                        NSLogColor([NSColor redColor], @" Problem setting superK wavelength.\n");
+                        goto err;
+                    }
                 } else {
                     NSNumber* laserIntensity = [intensityArray objectAtIndex:i];
                     NSString* laserIntensityAsString = [NSString stringWithFormat:@"%i",[laserIntensity intValue]];
@@ -1116,11 +1117,11 @@ smellieDBReadInProgress = _smellieDBReadInProgress;
                     [valuesToFillPerSubRun setObject:[NSNumber numberWithInt:0] forKey:@"wavelength_low_edge"];
                     [valuesToFillPerSubRun setObject:[NSNumber numberWithInt:0] forKey:@"wavelength_high_edge"];
                     @try{
-		      [self setLaserIntensity:laserIntensityAsString];
-		    } @catch (NSException *e) {
-		      NSLogColor([NSColor redColor], @" Problem setting laser intensity.\n");
-		      goto err;
-		    } 
+                        [self setLaserIntensity:laserIntensityAsString];
+                    } @catch (NSException *e) {
+                        NSLogColor([NSColor redColor], @" Problem setting laser intensity.\n");
+                        goto err;
+                    }
                 }
 
                 //this used to be 10.0,  Slave mode in Orca requires time (unknown reason) - Chris J
@@ -1136,19 +1137,19 @@ smellieDBReadInProgress = _smellieDBReadInProgress;
                     NSLog(@"SMELLIE_RUN:Intensity:Firing Pedestals\n");
 
                     float pulserRate = [numericTriggerFrequencyInSlaveMode floatValue];
-		    @try{
-		      [theMTCModel setThePulserRate:pulserRate];
-		    } @catch (NSException *e) {
-		      NSLogColor([NSColor redColor], @"Exception setting mtc pulser rate.\n");
-		      goto err;
-		    }
-
-		    @try{
-		      [theMTCModel fireMTCPedestalsFixedRate];
-		    } @catch (NSException *e) {
-		      NSLogColor([NSColor redColor], @"Exception setting mtc ped rate.\n");
-		      goto err;
-		    } 
+                @try{
+                    [theMTCModel setThePulserRate:pulserRate];
+                } @catch (NSException *e) {
+                    NSLogColor([NSColor redColor], @"Exception setting mtc pulser rate.\n");
+                    goto err;
+                }
+                    
+                    @try{
+                        [theMTCModel fireMTCPedestalsFixedRate];
+                    } @catch (NSException *e) {
+                        NSLogColor([NSColor redColor], @"Exception setting mtc ped rate.\n");
+                        goto err;
+                    }
 
                     NSLog(@"SMELLIE_RUN: Pulsing at %f Hz for %f seconds \n",[triggerFrequencyInSlaveMode floatValue],timeToPulse);
                     //THIS IS CRAZY - FIND SOME BETTER WAY OF DOING IT USING TUBII COUNTERS
@@ -1159,23 +1160,24 @@ smellieDBReadInProgress = _smellieDBReadInProgress;
                     NSString* numOfPulses = [NSString stringWithFormat:@"%@",[smellieSettings objectForKey:@"triggers_per_loop"]];
                     NSString* triggerFrequency = [NSString stringWithFormat:@"%@",[smellieSettings objectForKey:@"trigger_frequency"]];
                     NSLog(@"SMELLIE_RUN:%@ Pulses at %@ Hz \n",numOfPulses,triggerFrequency);
-		    @try{
-		      [self sendCustomSmellieCmd:masterModeCommand withArgs:@[triggerFrequency, numOfPulses]];
-		    } @catch (NSException *e) {
-		      NSLogColor([NSColor redColor], @"Problem setting master mode trigger frequency.\n");
-		      goto err;
-		    }
+                    @try{
+                        [_smellieClient command:@"set_superk_lock_off"];
+                        [_smellieClient command:@"pulse_master_mode_sk" withArgs:@[triggerFrequency, numOfPulses]];
+                    } @catch (NSException *e) {
+                        NSLogColor([NSColor redColor], @"Problem setting master mode trigger frequency.\n");
+                        goto err;
+                    }
                 }
 
                 if([self smellieSlaveMode]){
                     NSLog(@"SMELLIE_RUN:Stopping MTCPedestals\n");
-		    @try{
-		      [theMTCModel stopMTCPedestalsFixedRate];
-		    } @catch (NSException *e) {
-		      NSLogColor([NSColor redColor], @"Exception stopping MTC ped rate.\n");
-		      goto err;
-		    }
-		}
+                    @try{
+                        [theMTCModel stopMTCPedestalsFixedRate];
+                    } @catch (NSException *e) {
+                        NSLogColor([NSColor redColor], @"Exception stopping MTC ped rate.\n");
+                        goto err;
+                    }
+                }
 
                 //Keep record of sub-run settings
                 [self updateSmellieRunDocument:valuesToFillPerSubRun];
@@ -1640,7 +1642,7 @@ err:
         for (id specificConfigValue in configForSmellie){
             if([specificConfigValue isEqualToString:[NSString stringWithFormat:@"laserInput%i",laserHeadIndex]]){
                 NSString *laserHeadConnected = [NSString stringWithFormat:@"%@",[[configForSmellie objectForKey:specificConfigValue] objectForKey:@"laserHeadConnected"]];
-                [laserHeadToSepiaMapping setObject:[NSString stringWithFormat:@"%i",laserHeadIndex] forKey:laserHeadConnected];
+                [laserHeadToSepiaMapping setObject:[NSNumber numberWithInt:laserHeadIndex] forKey:laserHeadConnected];
             }
         }
     }
@@ -1653,8 +1655,8 @@ err:
         for (id specificConfigValue in configForSmellie){
             if([specificConfigValue isEqualToString:[NSString stringWithFormat:@"laserInput%i",laserHeadIndex]]){
                 NSString *laserHeadConnected = [NSString stringWithFormat:@"%@",[[configForSmellie objectForKey:specificConfigValue] objectForKey:@"laserHeadConnected"]];
-                NSString *laserGainControl = [NSString stringWithFormat:@"%@",[[configForSmellie objectForKey:specificConfigValue] objectForKey:@"gainControlFactor"]];
-                [laserHeadToGainControlMapping setObject:[NSString stringWithFormat:@"%@",laserGainControl] forKey:laserHeadConnected];
+                NSNumber *laserGainControl = [NSNumber numberWithFloat:[[[configForSmellie objectForKey:specificConfigValue] objectForKey:@"gainControlFactor"] floatValue]];
+                [laserHeadToGainControlMapping setObject:laserGainControl forKey:laserHeadConnected];
             }
         }
     }
@@ -1672,7 +1674,7 @@ err:
            || [specificConfigValue isEqualToString:[NSString stringWithFormat:@"laserInput4"]]
            || [specificConfigValue isEqualToString:[NSString stringWithFormat:@"laserInput5"]]){
             NSString *fibreSwitchInputConnected = [[configForSmellie objectForKey:specificConfigValue] objectForKey:@"fibreSwitchInputConnected"];
-            NSString* parsedFibreReference = [fibreSwitchInputConnected stringByReplacingOccurrencesOfString:@"Channel" withString:@""];
+            NSNumber* parsedFibreReference = [NSNumber numberWithInt:[fibreSwitchInputConnected stringByReplacingOccurrencesOfString:@"Channel" withString:@""]];
             NSString * laserHeadReference = [[configForSmellie objectForKey:specificConfigValue] objectForKey:@"laserHeadConnected"];
             [laserToInputFibreMapping setObject:parsedFibreReference forKey:laserHeadReference];
         }
@@ -1692,8 +1694,8 @@ err:
     }
     [self setSmellieFibreSwitchToFibreMapping:fibreSwitchOutputToFibre];
     [fibreSwitchOutputToFibre release];
-    
-    NSLog(@"%@", fibreSwitchOutputToFibre);
+    NSLog(@"Config for smellie: %@\n", configForSmellie);
+    NSLog(@"Fibre switch output: %@\n", fibreSwitchOutputToFibre);
     return configForSmellie;
 }
 
