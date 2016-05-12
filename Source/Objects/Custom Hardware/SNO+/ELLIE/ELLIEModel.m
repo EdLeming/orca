@@ -92,7 +92,7 @@ smellieDBReadInProgress = _smellieDBReadInProgress;
     self = [super init];
     if (self){
         _tellieClient = [[XmlrpcClient alloc] initWithHostName:@"daq1" withPort:@"5030"];
-        _smellieClient = [[XmlrpcClient alloc] initWithHostName:@"localhost" withPort:@"5020"];
+        _smellieClient = [[XmlrpcClient alloc] initWithHostName:@"snodrop2" withPort:@"5020"];
         [_smellieClient setTimeout:60];
     }
     return self;
@@ -104,7 +104,7 @@ smellieDBReadInProgress = _smellieDBReadInProgress;
 
     if (self){
         _tellieClient = [[XmlrpcClient alloc] initWithHostName:@"daq1" withPort:@"5030"];
-        _smellieClient = [[XmlrpcClient alloc] initWithHostName:@"localhost" withPort:@"5020"];
+        _smellieClient = [[XmlrpcClient alloc] initWithHostName:@"snodrop2" withPort:@"5020"];
         [_smellieClient setTimeout:60];
     }
     return self;
@@ -392,9 +392,9 @@ smellieDBReadInProgress = _smellieDBReadInProgress;
 
         }
     }
-    
+    NSLog(@"Firing : %@", loops);
+    BOOL keepRunning = YES;
     for(int i = 0; i<[loops integerValue]; i++){
-
         //Each loop fires 5e3 identical tellie pulses, except the final one, which fires: (totalRequestedShots % 5e3)
         NSNumber* noShots = [NSNumber numberWithInt:5e3];
         if(i == ([loops integerValue]-1) && fRemainder > 0){
@@ -442,10 +442,14 @@ smellieDBReadInProgress = _smellieDBReadInProgress;
         [self updateTellieRunDocument:fireCommands];
 
         if ([noShots integerValue] == 5000){
-            BOOL check = ORRunAlertPanel(@"TELLIE Run Check",@"Would you like to contiune with this fibre?",@"OK",@"No something's up",nil);
-            if (check == NO) {
+            BOOL keepRunning = ORRunAlertPanel(@"TELLIE Run Check",@"Would you like to contiune with this fibre?",@"OK",@"No something's up",nil);
+            if (keepRunning == NO) {
+                NSLog(@"Stopping tellie run for fibre: %@",[fireCommands objectForKey:@"fibre"] );
                 break;
             }
+        }
+        if (keepRunning == NO) {
+            break;
         }
     }
     [self setEllieFireFlag:NO];
@@ -943,9 +947,9 @@ smellieDBReadInProgress = _smellieDBReadInProgress;
     // FIND AND LOAD RELEVANT CONFIG
     //
     NSNumber* configVersionNo;
-    if([smellieSettings objectForKey:@"confg_name"]){
-        NSLogColor([NSColor redColor], @"Loading config file: %@\n", [smellieSettings objectForKey:@"run_name"]);
-        configVersionNo = [self fetchConfigVersionFor:[smellieSettings objectForKey:@"run_name"]];
+    if([smellieSettings objectForKey:@"config_name"]){
+        NSLogColor([NSColor redColor], @"Loading config file: %@\n", [smellieSettings objectForKey:@"config_name"]);
+        configVersionNo = [self fetchConfigVersionFor:[smellieSettings objectForKey:@"config_name"]];
     } else {
         configVersionNo = [self fetchRecentConfigVersion];
         NSLogColor([NSColor redColor], @"Loading config file: %i\n", [configVersionNo intValue]);
@@ -954,15 +958,13 @@ smellieDBReadInProgress = _smellieDBReadInProgress;
     [self fetchConfigurationFile:configVersionNo];
     NSLog(@"Config loaded!\n");
 
-    // STORE MTC SETTINGS
+    // GET MTC SETTINGS
     //
     //Save the current MTC delay / period settings
     NSMutableDictionary* currentMTCSettings = [[NSMutableDictionary alloc] init];
-    NSLog(@"SMELLIE_RUN:Mtcd coarse delay set to %f ns\n",[theMTCModel dbFloatByIndex:kCoarseDelay]);
     NSNumber * mtcCoarseDelay = [NSNumber numberWithUnsignedLong:[theMTCModel dbFloatByIndex:kCoarseDelay]];
     [currentMTCSettings setObject:mtcCoarseDelay forKey:@"mtcd_coarse_delay"];
 
-    NSLog(@"SMELLIE_RUN:Mtcd pulser rate set to %f Hz\n",[theMTCModel dbFloatByIndex:kPulserPeriod]);
     NSNumber * mtcPulserPeriod = [NSNumber numberWithFloat:[theMTCModel dbFloatByIndex:kPulserPeriod]];
     [currentMTCSettings setObject:mtcPulserPeriod forKey:@"mtcd_pulser_period"];
 
@@ -1003,7 +1005,7 @@ smellieDBReadInProgress = _smellieDBReadInProgress;
         NSLog(@"SMELLIE_RUN:Running in SLAVE mode\n");
     }else if([operationMode isEqualToString:@"Master Mode"]){
         [self setSmellieSlaveMode:NO];
-        NSLog(@"SMELIE_RUN:Running n MASTER mode\n");
+        NSLog(@"SMELIE_RUN:Running in MASTER mode\n");
     }else{
         NSLogColor([NSColor redColor], @"Slave / master mode does not appewar to be included in config file.\n");
         goto err;
@@ -1073,8 +1075,7 @@ smellieDBReadInProgress = _smellieDBReadInProgress;
             NSLog(@"loopLength : %i\n",loopLength);
             //Loop through each intensity of a SMELLIE run
             for(int i=0; i < loopLength; i++){
-                NSLog(@"Inside loop : %i\n",i);
-                if(([[NSThread currentThread] isCancelled]) || ![runControl isRunning]){
+                if(([[NSThread currentThread] isCancelled])){// || ![runControl isRunning]){
                     endOfRun = YES;
                     break;
                 }
@@ -1161,7 +1162,6 @@ smellieDBReadInProgress = _smellieDBReadInProgress;
                     NSString* triggerFrequency = [NSString stringWithFormat:@"%@",[smellieSettings objectForKey:@"trigger_frequency"]];
                     NSLog(@"SMELLIE_RUN:%@ Pulses at %@ Hz \n",numOfPulses,triggerFrequency);
                     @try{
-                        [_smellieClient command:@"set_superk_lock_off"];
                         [_smellieClient command:@"pulse_master_mode_sk" withArgs:@[triggerFrequency, numOfPulses]];
                     } @catch (NSException *e) {
                         NSLogColor([NSColor redColor], @"Problem setting master mode trigger frequency.\n");
@@ -1184,12 +1184,12 @@ smellieDBReadInProgress = _smellieDBReadInProgress;
                 [valuesToFillPerSubRun release];
 
                 //Activate software locks
-		@try {
-		  [self sendCustomSmellieCmd:softLockOnCommand withArgs:nil];
-		} @catch (NSException *e) {
-		  NSLogColor([NSColor redColor], @"Problem sending softlock.\n");
-		  goto err;									
-		}
+                @try {
+                    [self sendCustomSmellieCmd:softLockOnCommand withArgs:nil];
+                } @catch (NSException *e) {
+                    NSLogColor([NSColor redColor], @"Problem sending softlock.\n");
+                    goto err;
+                }
                 //Check if run file requests a sleep time between sub_runs
                 if([smellieSettings objectForKey:@"sleep_between_sub_run"]){
                     NSTimeInterval sleepTime = [[smellieSettings objectForKey:@"sleep_between_sub_run"] floatValue];
@@ -1582,14 +1582,13 @@ err:
                           userInfo:nil];
         [e raise];
     }
+    
     NSDictionary* entries = [json objectForKey:@"rows"];
     for(NSDictionary* entry in entries){
         if([[entry valueForKey:@"value"] valueForKey:@"config_name"]){
-            NSLog(@"%@\n",[[entry valueForKey:@"value"] valueForKey:@"config_name"]);
             NSString* configName = [NSString stringWithFormat:@"%@",[[entry valueForKey:@"value"] valueForKey:@"config_name"]];
             if([configName isEqualToString:name]){
-                NSString* stringValueOfCurrentVersion = [NSString stringWithFormat:@"%@",[entry valueForKey:@"key"]];
-                NSLog(@"%@\n", stringValueOfCurrentVersion); 
+                NSString* stringValueOfCurrentVersion = [NSString stringWithFormat:@"%@",[[[entry valueForKey:@"value"] valueForKey:@"configuration_info"] valueForKey:@"configuration_version"]];
                 return [NSNumber numberWithInt:[stringValueOfCurrentVersion intValue]];
             }
         }
