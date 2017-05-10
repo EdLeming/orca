@@ -63,6 +63,7 @@
                 <outlet property="tellieTViewItem" destination="149" id="1372"/>
                 <outlet property="tellieTabView" destination="15" id="1370"/>
                 <outlet property="tellieTriggerDelayTf" destination="1219" id="1348"/>
+                <outlet property="tubiiThreadResponseTf" destination="0hh-T7-DWh" id="Hlc-rf-YZE"/>
                 <outlet property="window" destination="1" id="4"/>
             </connections>
         </customObject>
@@ -1607,6 +1608,7 @@
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                         <connections>
+                                                            <binding destination="z54-Vu-FHb" name="value" keyPath="values" id="nm1-lg-AJ9"/>
                                                             <outlet property="delegate" destination="-2" id="fCv-Vu-N8i"/>
                                                         </connections>
                                                     </textField>
@@ -1714,7 +1716,7 @@
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
                                                         <connections>
-                                                            <action selector="tellieExpertFireAction:" target="-2" id="uFV-GU-2mM"/>
+                                                            <action selector="amellieFireFibreAction:" target="-2" id="RZk-YM-3Bh"/>
                                                         </connections>
                                                     </button>
                                                     <button verticalHuggingPriority="750" id="y9s-Xj-yUz">
@@ -1726,7 +1728,7 @@
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
                                                         <connections>
-                                                            <action selector="tellieExpertStopAction:" target="-2" id="2g3-jO-RRf"/>
+                                                            <action selector="amellieStopFibreAction:" target="-2" id="TYt-7C-IiO"/>
                                                         </connections>
                                                     </button>
                                                     <textField verticalHuggingPriority="750" id="0aI-jh-NOY">
@@ -1750,15 +1752,15 @@
                                                         </textFieldCell>
                                                     </textField>
                                                     <button verticalHuggingPriority="750" id="2IB-Ik-Yb4">
-                                                        <rect key="frame" x="170" y="62" width="184" height="32"/>
+                                                        <rect key="frame" x="167" y="62" width="190" height="32"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <animations/>
-                                                        <buttonCell key="cell" type="push" title="Validate Tellie Settings" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Hbr-i7-sJs">
+                                                        <buttonCell key="cell" type="push" title="Validate Amellie Settings" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Hbr-i7-sJs">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
                                                         <connections>
-                                                            <action selector="tellieExpertValidateSettingsAction:" target="-2" id="P8J-Lp-6EY"/>
+                                                            <action selector="amellieValidateSettingsAction:" target="-2" id="MlP-Cc-Uek"/>
                                                         </connections>
                                                     </button>
                                                 </subviews>
@@ -1774,7 +1776,7 @@
                                             <animations/>
                                             <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="TBa-x0-Ynk">
                                                 <font key="font" metaFont="system"/>
-                                                <string key="title">NOTE: This tab is ONLY FOR USE BY EXPERTS. If you don't know what IPW means please move along. It's possible you could seriously hurt the detector - Ed </string>
+                                                <string key="title">NOTE: This tab is ONLY FOR USE BY EXPERTS. If you don't know what IPW means please close this tab. It's possible you could seriously hurt the detector - Ed </string>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -1789,14 +1791,14 @@
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <box title="Tellie server" borderType="line" id="ojo-3j-7NR">
-                                            <rect key="frame" x="63" y="416" width="481" height="176"/>
+                                            <rect key="frame" x="63" y="468" width="481" height="134"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <view key="contentView">
-                                                <rect key="frame" x="1" y="1" width="479" height="160"/>
+                                                <rect key="frame" x="1" y="1" width="479" height="118"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textField verticalHuggingPriority="750" id="RvI-ar-usS">
-                                                        <rect key="frame" x="18" y="106" width="159" height="22"/>
+                                                        <rect key="frame" x="18" y="64" width="159" height="22"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <animations/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="XVz-WY-K8x">
@@ -1809,7 +1811,7 @@
                                                         </connections>
                                                     </textField>
                                                     <textField verticalHuggingPriority="750" id="1ju-cR-bNX">
-                                                        <rect key="frame" x="213" y="106" width="96" height="22"/>
+                                                        <rect key="frame" x="213" y="64" width="96" height="22"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <animations/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="TOZ-ca-3jn">
@@ -1822,7 +1824,7 @@
                                                         </connections>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="DKP-BF-DFT">
-                                                        <rect key="frame" x="16" y="134" width="88" height="17"/>
+                                                        <rect key="frame" x="16" y="92" width="88" height="17"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <animations/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Host machine" id="ROG-9Q-hPC">
@@ -1832,7 +1834,7 @@
                                                         </textFieldCell>
                                                     </textField>
                                                     <button verticalHuggingPriority="750" id="lEU-AF-nKC">
-                                                        <rect key="frame" x="377" y="98" width="67" height="32"/>
+                                                        <rect key="frame" x="377" y="56" width="67" height="32"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <animations/>
                                                         <buttonCell key="cell" type="push" title="Ping" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="AVk-Me-yLR">
@@ -1844,7 +1846,7 @@
                                                         </connections>
                                                     </button>
                                                     <textField verticalHuggingPriority="750" id="HpJ-zH-aEj">
-                                                        <rect key="frame" x="18" y="14" width="443" height="66"/>
+                                                        <rect key="frame" x="18" y="14" width="443" height="33"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <animations/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="k1R-mz-Hmb">
@@ -1854,7 +1856,7 @@
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="Wal-3o-LDp">
-                                                        <rect key="frame" x="210" y="133" width="30" height="17"/>
+                                                        <rect key="frame" x="210" y="91" width="30" height="17"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <animations/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Port" id="1AH-RF-gpy">
@@ -1871,14 +1873,14 @@
                                             <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </box>
                                         <box title="Smellie server" borderType="line" id="XgM-QC-Jfr">
-                                            <rect key="frame" x="63" y="230" width="481" height="176"/>
+                                            <rect key="frame" x="63" y="319" width="481" height="135"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <view key="contentView">
-                                                <rect key="frame" x="1" y="1" width="479" height="160"/>
+                                                <rect key="frame" x="1" y="1" width="479" height="119"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textField verticalHuggingPriority="750" id="dia-Hx-Q14">
-                                                        <rect key="frame" x="18" y="106" width="159" height="22"/>
+                                                        <rect key="frame" x="18" y="65" width="159" height="22"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <animations/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="bSV-rm-jc2">
@@ -1891,7 +1893,7 @@
                                                         </connections>
                                                     </textField>
                                                     <textField verticalHuggingPriority="750" id="6te-Tj-hxF">
-                                                        <rect key="frame" x="213" y="106" width="96" height="22"/>
+                                                        <rect key="frame" x="213" y="65" width="96" height="22"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <animations/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="heK-So-dvn">
@@ -1904,7 +1906,7 @@
                                                         </connections>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="Zh8-VE-vdX">
-                                                        <rect key="frame" x="16" y="134" width="88" height="17"/>
+                                                        <rect key="frame" x="16" y="93" width="88" height="17"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <animations/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Host machine" id="Nzn-M4-Gc5">
@@ -1914,7 +1916,7 @@
                                                         </textFieldCell>
                                                     </textField>
                                                     <button verticalHuggingPriority="750" id="Tzg-dK-gZ0">
-                                                        <rect key="frame" x="377" y="98" width="67" height="32"/>
+                                                        <rect key="frame" x="377" y="57" width="67" height="32"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <animations/>
                                                         <buttonCell key="cell" type="push" title="Ping" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="NQh-IR-V0V">
@@ -1926,7 +1928,7 @@
                                                         </connections>
                                                     </button>
                                                     <textField verticalHuggingPriority="750" id="VYd-Pq-JXq">
-                                                        <rect key="frame" x="18" y="14" width="443" height="66"/>
+                                                        <rect key="frame" x="18" y="14" width="443" height="35"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <animations/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="VCf-80-b9U">
@@ -1936,7 +1938,7 @@
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="2TG-di-xSM">
-                                                        <rect key="frame" x="210" y="133" width="30" height="17"/>
+                                                        <rect key="frame" x="210" y="92" width="30" height="17"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <animations/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Port" id="KhT-SX-IhY">
@@ -1953,14 +1955,14 @@
                                             <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </box>
                                         <box title="Smellie interlock server" borderType="line" id="p8s-EK-peY">
-                                            <rect key="frame" x="63" y="36" width="481" height="176"/>
+                                            <rect key="frame" x="63" y="172" width="481" height="138"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <view key="contentView">
-                                                <rect key="frame" x="1" y="1" width="479" height="160"/>
+                                                <rect key="frame" x="1" y="1" width="479" height="122"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textField verticalHuggingPriority="750" id="LKr-RC-LbQ">
-                                                        <rect key="frame" x="18" y="106" width="159" height="22"/>
+                                                        <rect key="frame" x="18" y="68" width="159" height="22"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <animations/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="CDb-dY-8EF">
@@ -1973,7 +1975,7 @@
                                                         </connections>
                                                     </textField>
                                                     <textField verticalHuggingPriority="750" id="Xdq-nR-X6Z">
-                                                        <rect key="frame" x="213" y="106" width="96" height="22"/>
+                                                        <rect key="frame" x="213" y="68" width="96" height="22"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <animations/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="syc-iK-ZXC">
@@ -1986,7 +1988,7 @@
                                                         </connections>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="bb2-S1-LMm">
-                                                        <rect key="frame" x="16" y="134" width="88" height="17"/>
+                                                        <rect key="frame" x="16" y="96" width="88" height="17"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <animations/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Host machine" id="Wqb-sg-eR1">
@@ -1996,7 +1998,7 @@
                                                         </textFieldCell>
                                                     </textField>
                                                     <button verticalHuggingPriority="750" id="8PW-9X-Ifs">
-                                                        <rect key="frame" x="377" y="98" width="67" height="32"/>
+                                                        <rect key="frame" x="377" y="60" width="67" height="32"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <animations/>
                                                         <buttonCell key="cell" type="push" title="Ping" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="H9s-iJ-Ckm">
@@ -2008,7 +2010,7 @@
                                                         </connections>
                                                     </button>
                                                     <textField verticalHuggingPriority="750" id="mcQ-O7-amI">
-                                                        <rect key="frame" x="18" y="14" width="443" height="66"/>
+                                                        <rect key="frame" x="18" y="14" width="443" height="39"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <animations/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="VFj-sC-WxE">
@@ -2018,7 +2020,7 @@
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" id="82t-px-lDU">
-                                                        <rect key="frame" x="210" y="133" width="30" height="17"/>
+                                                        <rect key="frame" x="210" y="95" width="30" height="17"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <animations/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Port" id="Brj-JM-dt6">
@@ -2027,6 +2029,54 @@
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
+                                                </subviews>
+                                                <animations/>
+                                            </view>
+                                            <animations/>
+                                            <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                                            <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </box>
+                                        <box title="TUBii keep-alive thread" borderType="line" id="piE-bd-y5m">
+                                            <rect key="frame" x="63" y="24" width="481" height="137"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <view key="contentView">
+                                                <rect key="frame" x="1" y="1" width="479" height="121"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <button verticalHuggingPriority="750" id="4je-77-hvO">
+                                                        <rect key="frame" x="129" y="83" width="79" height="32"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <animations/>
+                                                        <buttonCell key="cell" type="push" title="Check" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="5vr-0o-lO4">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="tubiiPing:" target="-2" id="2iw-Uo-7na"/>
+                                                        </connections>
+                                                    </button>
+                                                    <textField verticalHuggingPriority="750" id="0hh-T7-DWh">
+                                                        <rect key="frame" x="18" y="14" width="443" height="63"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <animations/>
+                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="b6T-XG-pdd">
+                                                            <font key="font" metaFont="system"/>
+                                                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                    <button verticalHuggingPriority="750" id="Sxy-Lg-Zzt">
+                                                        <rect key="frame" x="263" y="83" width="84" height="32"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <animations/>
+                                                        <buttonCell key="cell" type="push" title="Restart" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="w5h-fp-0hR">
+                                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                            <font key="font" metaFont="system"/>
+                                                        </buttonCell>
+                                                        <connections>
+                                                            <action selector="tubiiRestart:" target="-2" id="W6Q-xF-hKI"/>
+                                                        </connections>
+                                                    </button>
                                                 </subviews>
                                                 <animations/>
                                             </view>
@@ -2062,5 +2112,6 @@
             <real key="minimum" value="0.0"/>
             <real key="maximum" value="2"/>
         </numberFormatter>
+        <userDefaultsController representsSharedInstance="YES" id="z54-Vu-FHb"/>
     </objects>
 </document>

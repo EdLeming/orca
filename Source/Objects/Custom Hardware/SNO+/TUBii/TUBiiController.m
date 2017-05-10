@@ -67,7 +67,6 @@
                      selector : @selector(tubiiLockChanged:)
                          name : ORTubiiLock
                        object : nil];
-    
 }
 
 - (void) checkGlobalSecurity
@@ -702,4 +701,5 @@
         }
     }
 }
+
 @end

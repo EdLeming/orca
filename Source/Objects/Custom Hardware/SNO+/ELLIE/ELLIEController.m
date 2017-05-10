@@ -11,6 +11,7 @@
 
 #import "ELLIEController.h"
 #import "ELLIEModel.h"
+#import "TUBiiModel.h"
 #import "SNOPModel.h"
 #import "SNOP_Run_Constants.h"
 #import "ORRunModel.h"
@@ -110,6 +111,11 @@ NSString* ORTELLIERunStart = @"ORTELLIERunStarted";
                      selector : @selector(killInterlock:)
                          name : @"SMELLIEEmergencyStop"
                         object: nil];
+
+    [notifyCenter addObserver : self
+                     selector : @selector(tubiiDied:)
+                         name : @"TUBiiKeepAliveDied"
+                       object : nil];
 }
 
 -(void)fetchConfigurationFile:(NSNotification *)aNote{
@@ -1240,24 +1246,30 @@ NSString* ORTELLIERunStart = @"ORTELLIERunStarted";
 /////////////////////////////////////////////
 - (IBAction)telliePing:(id)sender {
     if([model pingTellie]){
-        NSString* response = [NSString stringWithFormat:@"Connected to tellie at:\n\n%@:%@", [model tellieHost], [model telliePort]];
+        NSString* response = [NSString stringWithFormat:@"Connected to tellie at: %@:%@", [model tellieHost], [model telliePort]];
         [tellieServerResponseTf setStringValue:response];
         [tellieServerResponseTf setBackgroundColor:[NSColor greenColor]];
     } else {
-        NSString* response = [NSString stringWithFormat:@"Could not connect to tellie at:\n\n%@:%@", [model tellieHost], [model telliePort]];
+        NSString* response = [NSString stringWithFormat:@"Could not connect to tellie at: %@:%@", [model tellieHost], [model telliePort]];
         [tellieServerResponseTf setStringValue:response];
         [tellieServerResponseTf setBackgroundColor:[NSColor redColor]];
     }
     return;
 }
 
+-(void)tellieDied:(NSNotification*)note{
+    NSString* response = [NSString stringWithFormat:@"Could not connect to tellie at: %@:%@", [model tellieHost], [model telliePort]];
+    [tellieServerResponseTf setStringValue:response];
+    [tellieServerResponseTf setBackgroundColor:[NSColor redColor]];
+}
+
 - (IBAction)smelliePing:(id)sender {
     if([model pingSmellie]){
-        NSString* response = [NSString stringWithFormat:@"Connected to smellie at:\n\n%@:%@", [model smellieHost], [model smelliePort]];
+        NSString* response = [NSString stringWithFormat:@"Connected to smellie at: %@:%@", [model smellieHost], [model smelliePort]];
         [smellieServerResponseTf setStringValue:response];
         [smellieServerResponseTf setBackgroundColor:[NSColor greenColor]];
     } else {
-        NSString* response = [NSString stringWithFormat:@"Could not connect to smellie at:\n\n%@:%@", [model smellieHost], [model smelliePort]];
+        NSString* response = [NSString stringWithFormat:@"Could not connect to smellie at: %@:%@", [model smellieHost], [model smelliePort]];
         [smellieServerResponseTf setStringValue:response];
         [smellieServerResponseTf setBackgroundColor:[NSColor redColor]];
     }
@@ -1266,11 +1278,11 @@ NSString* ORTELLIERunStart = @"ORTELLIERunStarted";
 
 - (IBAction)interlockPing:(id)sender {
     if([model pingInterlock]){
-        NSString* response = [NSString stringWithFormat:@"Connected to interlock at:\n\n%@:%@", [model interlockHost], [model interlockPort]];
+        NSString* response = [NSString stringWithFormat:@"Connected to interlock at: %@:%@", [model interlockHost], [model interlockPort]];
         [interlockServerResponseTf setStringValue:response];
         [interlockServerResponseTf setBackgroundColor:[NSColor greenColor]];
     } else {
-        NSString* response = [NSString stringWithFormat:@"Could not connect to interlock at:\n\n%@:%@", [model interlockHost], [model interlockPort]];
+        NSString* response = [NSString stringWithFormat:@"Could not connect to interlock at: %@:%@", [model interlockHost], [model interlockPort]];
         [interlockServerResponseTf setStringValue:response];
         [interlockServerResponseTf setBackgroundColor:[NSColor redColor]];
     }
@@ -1280,5 +1292,64 @@ NSString* ORTELLIERunStart = @"ORTELLIERunStarted";
 -(void)killInterlock:(NSNotification *)aNote
 {
     [model killKeepAlive];
+}
+
+- (IBAction)tubiiRestart:(id)sender {
+    //////////////
+    //Get a Tubii object
+    NSArray*  tubiiModels = [[(ORAppDelegate*)[NSApp delegate] document] collectObjectsOfClass:NSClassFromString(@"TUBiiModel")];
+    if(![tubiiModels count]){
+        NSLogColor([NSColor redColor], @"[ELLIE]: Couldn't find Tubii model in current experiment.\n");
+        return;
+    }
+    TUBiiModel* theTubiiModel = [tubiiModels objectAtIndex:0];
+    if([[theTubiiModel keepAliveThread] isExecuting]){
+        NSString* response = @"TUBii keep alive thread is already active, restarting.\n";
+        [tubiiThreadResponseTf setStringValue:response];
+        // This method will cancel the thread, causing a break statement to
+        // be called, ending a while loop. Once outside the loop the memory
+        // is tidied up and the user is promped (via a pop-up box) to
+        // re-activate the thread.
+        [theTubiiModel killKeepAlive];
+    } else {
+        NSString* response = @"TUBii keep alive thread is getting a cold start.\n";
+        [tubiiThreadResponseTf setStringValue:response];
+        [theTubiiModel activateKeepAlive];
+    }
+    [self tubiiPing:self];
+}
+
+- (IBAction)tubiiPing:(id)sender {
+    //////////////
+    //Get a Tubii object
+    NSArray*  tubiiModels = [[(ORAppDelegate*)[NSApp delegate] document] collectObjectsOfClass:NSClassFromString(@"TUBiiModel")];
+    if(![tubiiModels count]){
+        NSLogColor([NSColor redColor], @"[ELLIE]: Couldn't find Tubii model in current experiment.\n");
+        return;
+    }
+    TUBiiModel* theTubiiModel = [tubiiModels objectAtIndex:0];
+
+    // If ping was requested by note, wait to see if keep alive inits OK.
+    if([[theTubiiModel keepAliveThread] isExecuting]){
+        NSString* response = @"TUBii keep alive thread is active.\n";
+        [tubiiThreadResponseTf setStringValue:response];
+        [tubiiThreadResponseTf setBackgroundColor:[NSColor greenColor]];
+    } else {
+        [self tubiiDied:nil];
+    }
+}
+
+-(void)tubiiDied:(NSNotification*)note{
+    NSString* response = @"TUBii keep alive thread is not executing. Please try a restart";
+    [tubiiThreadResponseTf setStringValue:response];
+    [tubiiThreadResponseTf setBackgroundColor:[NSColor redColor]];
+}
+- (IBAction)amellieValidateSettingsAction:(id)sender {
+}
+
+- (IBAction)amellieFireFibreAction:(id)sender {
+}
+
+- (IBAction)amellieStopFibreAction:(id)sender {
 }
 @end

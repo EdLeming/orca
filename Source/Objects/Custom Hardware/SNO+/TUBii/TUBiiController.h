@@ -182,5 +182,4 @@
 - (IBAction)LoadClockSource:(id)sender;
 - (IBAction)ClockSourceMatchHardware:(id)sender;
 
-
 @end

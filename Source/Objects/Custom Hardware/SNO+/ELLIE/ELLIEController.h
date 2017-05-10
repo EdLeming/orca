@@ -93,7 +93,8 @@
     IBOutlet NSTextField *tellieServerResponseTf;
     IBOutlet NSTextField *smellieServerResponseTf;
     IBOutlet NSTextField *interlockServerResponseTf;
-
+    IBOutlet NSTextField *tubiiThreadResponseTf;
+    
     // Instance variables
     NSThread *tellieThread;
     NSButton *tellieExpertConvertAction;
@@ -161,11 +162,18 @@
 -(IBAction)tellieBuildValidateAction:(id)sender;
 -(IBAction)tellieBuildPushToDBAction:(id)sender;
 
+//AMELLIE functions -----------------------------
+- (IBAction)amellieValidateSettingsAction:(id)sender;
+- (IBAction)amellieFireFibreAction:(id)sender;
+- (IBAction)amellieStopFibreAction:(id)sender;
+
 
 //Server tab functions -----------------------------
 - (IBAction)telliePing:(id)sender;
 - (IBAction)smelliePing:(id)sender;
 - (IBAction)interlockPing:(id)sender;
+- (IBAction)tubiiPing:(id)sender;
+- (IBAction)tubiiRestart:(id)sender;
 - (IBAction) serverSettingsChanged:(id)sender;
 -(void)killInterlock:(NSNotification *)aNote;
 
