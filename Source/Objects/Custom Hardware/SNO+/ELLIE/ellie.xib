@@ -1544,12 +1544,12 @@
                                                         <rect key="frame" x="144" y="12" width="93" height="26"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <animations/>
-                                                        <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="GSU-D5-tCL">
+                                                        <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="GSU-D5-tCL">
                                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="menu"/>
                                                             <menu key="menu" id="k7e-uj-L6m">
                                                                 <items>
-                                                                    <menuItem title="Item 1" state="on" id="eFV-TY-Qcl"/>
+                                                                    <menuItem title="Item 1" id="eFV-TY-Qcl"/>
                                                                     <menuItem title="Item 2" id="L89-2o-LYZ"/>
                                                                     <menuItem title="Item 3" id="bqL-KH-asb"/>
                                                                 </items>
@@ -2059,7 +2059,7 @@
                                                         <rect key="frame" x="18" y="14" width="443" height="63"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                         <animations/>
-                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="b6T-XG-pdd">
+                                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="b6T-XG-pdd">
                                                             <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>

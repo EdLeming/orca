@@ -174,8 +174,9 @@
 - (IBAction)interlockPing:(id)sender;
 - (IBAction)tubiiPing:(id)sender;
 - (IBAction)tubiiRestart:(id)sender;
-- (IBAction) serverSettingsChanged:(id)sender;
--(void)killInterlock:(NSNotification *)aNote;
+- (IBAction)serverSettingsChanged:(id)sender;
+- (void)tubiiDied:(NSNotification*)note;
+- (void)killInterlock:(NSNotification *)aNote;
 
 @end
 

@@ -47,6 +47,7 @@ NSString* ORTELLIERunStart = @"ORTELLIERunStarted";
 {
     [super awakeFromNib];
     [super updateWindow];
+    [self registerNotificationObservers];
     [self updateServerSettings:nil];
     [self fetchConfigurationFile:nil];
     [self initialiseTellie];
@@ -1240,6 +1241,14 @@ NSString* ORTELLIERunStart = @"ORTELLIERunStarted";
     return nil;
 }
 
+- (IBAction)amellieValidateSettingsAction:(id)sender {
+}
+
+- (IBAction)amellieFireFibreAction:(id)sender {
+}
+
+- (IBAction)amellieStopFibreAction:(id)sender {
+}
 
 /////////////////////////////////////////////
 // Server tab functions
@@ -1344,12 +1353,5 @@ NSString* ORTELLIERunStart = @"ORTELLIERunStarted";
     [tubiiThreadResponseTf setStringValue:response];
     [tubiiThreadResponseTf setBackgroundColor:[NSColor redColor]];
 }
-- (IBAction)amellieValidateSettingsAction:(id)sender {
-}
 
-- (IBAction)amellieFireFibreAction:(id)sender {
-}
-
-- (IBAction)amellieStopFibreAction:(id)sender {
-}
 @end

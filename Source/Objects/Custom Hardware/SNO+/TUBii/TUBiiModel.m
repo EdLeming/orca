@@ -811,7 +811,7 @@ NSString* ORTubiiLock				= @"ORTubiiLock";
     NSLog(@"[TUBii]: Stopped sending keep-alive to TUBii - ELLIE pulses will be shut off\n");
 
     // This thread should always be running. If it's died, post a note to get it automatically restarted.
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"TUBiiKeepAliveDied" object:self];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"TUBiiKeepAliveDied" object:nil];
 
     // release memory
     [pool release];
