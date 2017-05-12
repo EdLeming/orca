@@ -76,7 +76,7 @@
     IBOutlet NSTextField *tellieBuildNoPulses;
     IBOutlet NSTextField *tellieBuildRate;
     IBOutlet NSTextField *tellieBuildRunName;
-    IBOutlet NSPopUpButton *tellieBuildOpMode;
+    IBOutlet NSPopUpButton *tellieBuildOperationModePb;
     IBOutlet NSButton *tellieBuildValidate;
     IBOutlet NSButton *tellieBuildPushToDB;
 
@@ -161,6 +161,7 @@
 //Build Custom sequence
 -(IBAction)tellieBuildValidateAction:(id)sender;
 -(IBAction)tellieBuildPushToDBAction:(id)sender;
+-(IBAction)tellieBuildOpModeAction:(id)sender;
 
 //AMELLIE functions -----------------------------
 - (IBAction)amellieValidateSettingsAction:(id)sender;

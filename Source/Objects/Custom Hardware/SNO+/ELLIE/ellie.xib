@@ -21,7 +21,7 @@
                 <outlet property="tellieBuildConfigTViewItem" destination="17" id="1376"/>
                 <outlet property="tellieBuildNoPulses" destination="1632" id="nVm-Ou-bh8"/>
                 <outlet property="tellieBuildNodeSelection" destination="Xoa-uv-lCI" id="ghH-Jm-kgq"/>
-                <outlet property="tellieBuildOpMode" destination="Fgk-Se-nQv" id="lb4-w1-mHs"/>
+                <outlet property="tellieBuildOperationModePb" destination="Fgk-Se-nQv" id="COg-fx-AS9"/>
                 <outlet property="tellieBuildPhotons" destination="1627" id="nbx-jd-cTT"/>
                 <outlet property="tellieBuildPushToDB" destination="1665" id="HZS-x4-LlP"/>
                 <outlet property="tellieBuildRate" destination="1634" id="dqH-5d-xG9"/>
@@ -262,12 +262,12 @@
                                                                                                 <rect key="frame" x="40" y="8" width="102" height="26"/>
                                                                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                                                                 <animations/>
-                                                                                                <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="YOb-wU-Cb1">
+                                                                                                <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" selectedItem="h37-eO-okY" id="YOb-wU-Cb1">
                                                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                                                                     <font key="font" metaFont="menu"/>
                                                                                                     <menu key="menu" id="A2c-Sh-430">
                                                                                                         <items>
-                                                                                                            <menuItem title="Item 1" id="h37-eO-okY"/>
+                                                                                                            <menuItem title="Item 1" state="on" id="h37-eO-okY"/>
                                                                                                             <menuItem title="Item 2" id="uUr-xK-J3m"/>
                                                                                                             <menuItem title="Item 3" id="GS7-KV-qQc"/>
                                                                                                         </items>
@@ -1426,7 +1426,7 @@
                                                                                 </menu>
                                                                             </popUpButtonCell>
                                                                             <connections>
-                                                                                <action selector="tellieGeneralModeAction:" target="-2" id="3aJ-mi-Ba4"/>
+                                                                                <action selector="tellieBuildOpModeAction:" target="-2" id="vVE-j0-TPI"/>
                                                                             </connections>
                                                                         </popUpButton>
                                                                     </subviews>

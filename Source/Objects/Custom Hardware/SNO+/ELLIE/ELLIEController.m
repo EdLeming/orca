@@ -37,9 +37,6 @@ NSString* ORTELLIERunStart = @"ORTELLIERunStarted";
         NSLog(@"CouchDB for ELLIE isn't connected properly. Please reload the ELLIE Gui and check the database connections\n");
         NSLog(@"Reason for error %@ \n",e);
     }
-    [tellieServerResponseTf setEditable:NO];
-    [smellieServerResponseTf setEditable:NO];
-    [interlockServerResponseTf setEditable:NO];
     return self;
 }
 
@@ -51,9 +48,6 @@ NSString* ORTELLIERunStart = @"ORTELLIERunStarted";
     [self updateServerSettings:nil];
     [self fetchConfigurationFile:nil];
     [self initialiseTellie];
-    [tellieServerResponseTf setEditable:NO];
-    [smellieServerResponseTf setEditable:NO];
-    [interlockServerResponseTf setEditable:NO];
 }
 
 - (void)dealloc
@@ -133,7 +127,7 @@ NSString* ORTELLIERunStart = @"ORTELLIERunStarted";
 {
     // Load static (calibration and mapping) parameters from DB.
     [model loadTELLIEStaticsFromDB];
-
+    
     //Make sure sensible tabs are selected to begin with
     [ellieTabView selectTabViewItem:tellieTViewItem];
     [tellieTabView selectTabViewItem:tellieFireFibreTViewItem];
@@ -175,7 +169,6 @@ NSString* ORTELLIERunStart = @"ORTELLIERunStarted";
     [tellieGeneralFreqTf setDelegate:self];
     [tellieGeneralTriggerDelayTf setStringValue:@"650"];
 
-
     [tellieChannelTf setDelegate:self];
     [telliePulseWidthTf setDelegate:self];
     [telliePulseFreqTf setDelegate:self];
@@ -189,8 +182,9 @@ NSString* ORTELLIERunStart = @"ORTELLIERunStarted";
 
     // Build custom run tab
     [tellieBuildPushToDB setEnabled:NO];
-    [tellieBuildOpMode removeAllItems];
-    [tellieBuildOpMode addItemsWithTitles:@[@"Slave", @"Master"]];
+    [tellieBuildOperationModePb removeAllItems];
+    [tellieBuildOperationModePb addItemsWithTitles:@[@"Slave", @"Master"]];
+    [tellieExpertOperationModePb selectItemAtIndex:0];
     [tellieBuildTrigDelay setStringValue:@"650"];
     for(int i=0; i<100; i++){
         if(i<92){
@@ -201,6 +195,12 @@ NSString* ORTELLIERunStart = @"ORTELLIERunStarted";
             [[tellieBuildNodeSelection cellWithTag:i] setState:0];
         }
     }
+    
+    // Server tab stuff
+    [tellieServerResponseTf setEditable:NO];
+    [smellieServerResponseTf setEditable:NO];
+    [interlockServerResponseTf setEditable:NO];
+    [tubiiThreadResponseTf setEditable:NO];
 }
 
 -(IBAction)tellieGeneralFireAction:(id)sender
@@ -408,7 +408,7 @@ NSString* ORTELLIERunStart = @"ORTELLIERunStarted";
     NSNumber* pulseRate = [NSNumber numberWithInteger:[tellieBuildRate integerValue]];
     NSString* name = [tellieBuildRunName stringValue];
     BOOL slave = YES;
-    if([[tellieBuildOpMode titleOfSelectedItem] isEqualToString:@"Master"]){
+    if([[tellieBuildOperationModePb titleOfSelectedItem] isEqualToString:@"Master"]){
         slave = NO;
     }
 
@@ -430,6 +430,9 @@ NSString* ORTELLIERunStart = @"ORTELLIERunStarted";
 
     [tellieBuildPushToDB setEnabled:NO];
     [document release];
+}
+
+- (IBAction)tellieBuildOpModeAction:(id)sender {
 }
 
 ////////////////////////////////////////////////////////
@@ -701,7 +704,7 @@ NSString* ORTELLIERunStart = @"ORTELLIERunStarted";
 
     // Calculate settings and check any issues in
     BOOL inSlave = YES;
-    if([[tellieBuildOpMode titleOfSelectedItem] isEqualToString:@"Master"]){
+    if([[tellieBuildOperationModePb titleOfSelectedItem] isEqualToString:@"Master"]){
         inSlave = NO;
     }
 
