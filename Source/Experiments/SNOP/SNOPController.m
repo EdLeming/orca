@@ -1529,7 +1529,7 @@ err:
         NSLogColor([NSColor redColor], @"[SMELLIE]: A Smellie fire sequence is already on going. Cannot launch a new one until current sequence has finished\n");
         return;
     }
-
+/*
     //////////////////
     // Check if we're in the correct
     // standard run type
@@ -1537,7 +1537,7 @@ err:
         ORRunAlertPanel(@"The SMELLIE standard run is not loaded.",@"You must load a SMELLIE standard run and start a new run before starting a fire sequence",@"OK",nil,nil);
         return;
     }
-
+*/
     [smellieLoadRunFile setEnabled:NO];
     [smellieRunFileNameField setEnabled:NO];
     [smellieStopRunButton setEnabled:YES];

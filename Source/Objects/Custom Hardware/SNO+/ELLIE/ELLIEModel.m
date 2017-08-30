@@ -1698,7 +1698,7 @@ err:
         NSLogColor([NSColor redColor], @"[SMELLIE]: Please load the SMELLIE standard run type.\n");
         goto err;
     }
-    
+/*
     ///////////////////////
     // Check trigger is being sent to asyncronus port (EXT_A)
     NSUInteger asyncTrigMask;
@@ -1713,7 +1713,7 @@ err:
         NSLogColor([NSColor redColor], @"[SMELLIE]: Please amend via the TUBii GUI (triggers tab)\n");
         goto err;
     }
-
+*/
     ////////////////////////
     // SET MASTER / SLAVE MODE
     NSString *operationMode = [NSString stringWithFormat:@"%@",[smellieSettings objectForKey:@"operation_mode"]];
@@ -1944,13 +1944,14 @@ err:
 
                             //Set SMELLIE settings
                             if([laserKey isEqualTo:@"superK"]){
+/*
                                 @try{
                                     [theTubiiModel setSmellieDelay:[[smellieSettings objectForKey:@"delay_superK"] intValue]];
                                 } @catch(NSException* e) {
                                     NSLogColor([NSColor redColor], @"[SMELLIE]: Problem setting trigger delay at TUBii: %@\n", [e reason]);
                                     goto err;
                                 }
-
+*/
                                 @try{
                                     [self setSmellieSuperkMasterMode:intensity withRepRate:rate withWavelengthLow:wavelengthLowEdge withWavelengthHi:wavelengthHighEdge withFibreInput:fibreInputSwitchChannel withFibreOutput:fibreOutputSwitchChannel withNPulses:numOfPulses withGainVoltage:gain];
                                 } @catch(NSException* e){
@@ -1958,14 +1959,14 @@ err:
                                     goto err;
                                 }
                             } else {
-
+/*
                                 @try{
                                     [theTubiiModel setSmellieDelay:[[smellieSettings objectForKey:@"delay_fixed_wavelength"] intValue]];
                                 } @catch(NSException* e) {
                                     NSLogColor([NSColor redColor], @"[SMELLIE]: Problem setting trigger delay at TUBii: %@\n", [e reason]);
                                     goto err;
                                 }
-
+*/
                                 @try{
                                     [self setSmellieLaserHeadMasterMode:laserSwitchChannel withIntensity:intensity withRepRate:rate withFibreInput:fibreInputSwitchChannel withFibreOutput:fibreOutputSwitchChannel withNPulses:numOfPulses withGainVoltage:gain];
                                 } @catch(NSException* e){
@@ -2100,7 +2101,7 @@ err:
     @try{
         [theTubiiModel stopSmelliePulser];
     } @catch(NSException* e){
-        NSLogColor([NSColor redColor], @"[SMELLIE]: Problem sending stop command to the SMELLIE pulsar.\n");
+        NSLogColor([NSColor redColor], @"[SMELLIE]: Problem sending stop command to TUBii SMELLIE pulsar.\n");
         goto err;
     }
 
@@ -2118,9 +2119,9 @@ err:
     dispatch_sync(dispatch_get_main_queue(), ^{
         [[NSNotificationCenter defaultCenter] postNotificationName:ORReleaseRunStateChangeWait object:self];
     });
-
-    [pool release];
+    
     NSLog(@"[SMELLIE]: Run sequence stopped - TUBii is in an undefined state (may still be sending triggers).\n");
+    [pool release];
 }
 
 /*****************************/
