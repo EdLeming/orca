@@ -127,6 +127,8 @@ NSString* ORSMELLIEEmergencyStop = @"ORSMELLIEEmergencyStop";
 @synthesize maintenanceRollOver = _maintenanceRollOver;
 @synthesize smellieStopButton = _smellieStopButton;
 
+@synthesize useHttps = _useHttps;
+
 /*********************************************************/
 /*                  Class control methods                */
 /*********************************************************/
@@ -182,6 +184,9 @@ NSString* ORSMELLIEEmergencyStop = @"ORSMELLIEEmergencyStop";
         [smellieCli release];
         [smellieFlaggingCli release];
         [interlockCli release];
+        
+        //For couchdb delegation
+        [self setUseHttps:@YES];
     }
     return self;
 }

@@ -71,6 +71,9 @@
     NSThread* _smellieThread;
     NSThread* _tellieTransitionThread;
     NSThread* _smellieTransitionThread;
+    
+    // For couchdb delegation
+    BOOL _useHttps;
 }
 
 @property (nonatomic,retain) NSMutableDictionary* tellieFireParameters;
@@ -110,7 +113,7 @@
 @property (nonatomic,retain) NSThread* smellieTransitionThread;
 @property (nonatomic,assign) BOOL maintenanceRollOver;
 @property (nonatomic,assign) BOOL smellieStopButton;
-
+@property (nonatomic,assign) BOOL useHttps;
 
 -(id) init;
 -(id) initWithCoder:(NSCoder*)deoder;
