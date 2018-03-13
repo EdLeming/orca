@@ -37,6 +37,7 @@
 #import "ORFec32Model.h"
 #import "OROrderedObjManager.h"
 #import "ORSNOConstants.h"
+#import "ORDataFileModel.h"
 #import "ELLIEModel.h"
 #import "SNOP_Run_Constants.h"
 #import "SBC_Link.h"
@@ -89,6 +90,7 @@ BOOL isNotRunningOrIsInMaintenance()
 orcaDBUserName = _orcaDBUserName,
 smellieRunNameLabel = _smellieRunNameLabel,
 tellieRunNameLabel = _tellieRunNameLabel,
+amellieRunNameLabel = _amellieRunNameLabel,
 orcaDBPassword = _orcaDBPassword,
 orcaDBName = _orcaDBName,
 orcaDBPort = _orcaDBPort,
@@ -110,6 +112,7 @@ logHost,
 logPort,
 resync,
 smellieRunFiles = _smellieRunFiles,
+amellieRunFiles = _amellieRunFiles,
 tellieRunFiles = _tellieRunFiles;
 
 #pragma mark ¥¥¥Initialization
@@ -339,6 +342,40 @@ tellieRunFiles = _tellieRunFiles;
     return xl3Host;
 }
 
+- (void) setLogNameFormat
+{
+    NSArray *dataFileModels = [[(ORAppDelegate*)[NSApp delegate] document] collectObjectsOfClass:NSClassFromString(@"ORDataFileModel")];
+    if (![dataFileModels count]) {
+        NSLogColor([NSColor redColor], @"SetLogNameFormat: can't find ORDataFileModel!\n");
+        return;
+    }
+    ORDataFileModel* aDataFileModel = [dataFileModels objectAtIndex:0];
+
+    // Get hostname of operator machine
+    char hostname[255];
+    gethostname(hostname, 255);
+
+    // Add a prefix / suffix to the datafile
+    [aDataFileModel setFilePrefix:@""];
+    [aDataFileModel setFileStaticSuffix:[NSString stringWithFormat:@"_%s",hostname]];
+}
+
+- (void) saveLogFiles:(NSNotification*)aNote
+{
+    /*
+     This method gets called by a notification observer, which waits for ORCA to close.
+    */
+    NSArray*  runObjects = [[(ORAppDelegate*)[NSApp delegate] document] collectObjectsOfClass:NSClassFromString(@"ORRunModel")];
+    if(![runObjects count]){
+        NSLogColor([NSColor redColor], @"waitForRunNumber: couldn't find run control object!");
+        /* This should never happen. */
+        return;
+    }
+    ORRunModel* runControl = [runObjects objectAtIndex:0];
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:ORFlushLogsNotification object:self userInfo:[runControl runInfo]];
+}
+
 - (id) initWithCoder:(NSCoder*)decoder
 {
     self = [super initWithCoder:decoder];
@@ -506,6 +543,8 @@ tellieRunFiles = _tellieRunFiles;
     [_smellieRunFiles release];
     [_tellieRunFiles release];
     [_tellieRunNameLabel release];
+    [_amellieRunFiles release];
+    [_amellieRunNameLabel release];
 
     [defaultRunAlarm clearAlarm];
     [defaultRunAlarm dealloc];
@@ -525,6 +564,9 @@ tellieRunFiles = _tellieRunFiles;
      * information to the database. This will either block or quit.
      */
     [[self sessionDB] startSession];
+
+    /* Add hostname as prefix to logs */
+    [self setLogNameFormat];
 
     /* Get the standard runs from the database. */
     [self refreshStandardRunsFromDB];
@@ -613,6 +655,11 @@ tellieRunFiles = _tellieRunFiles;
     [notifyCenter addObserver : self
                      selector : @selector(detectorStateChanged:)
                          name : ORPQDetectorStateChanged
+                       object : nil];
+
+    [notifyCenter addObserver : self
+                     selector : @selector(saveLogFiles:)
+                         name : OROrcaAboutToQuitNotice
                        object : nil];
 }
 
@@ -1153,13 +1200,12 @@ err:
 
 - (void) subRunStarted:(NSNotification*)aNote
 {
-    //Ship subrunrecord - Just a special case of an eped record
+    //Ship subrunrecord - A special case of an eped record
     [self shipSubRunRecord];
 }
 
 - (void) subRunEnded:(NSNotification*)aNote
 {
-    //update calibration documents (TELLIE temp)
 }
 
 - (void) detectorStateChanged:(NSNotification*)aNote
@@ -1187,6 +1233,7 @@ err:
     if (pqRun->valid[kRun_runType]) {
         [runControl setRunType:pqRun->runType];
     }
+
     // update run state and run start time
     if (pqRun->valid[kRun_runInProgress] && pqRun->runInProgress && [runControl runningState] == eRunStopped) {
         [runControl setRunningState:eRunInProgress];
@@ -1196,6 +1243,23 @@ err:
             [runControl startTimer];
         }
         state = RUNNING;
+    }
+
+    // Get data file object to check if there's an active datafile.
+    NSArray *dataFileModels = [[(ORAppDelegate*)[NSApp delegate] document] collectObjectsOfClass:NSClassFromString(@"ORDataFileModel")];
+    if (![dataFileModels count]) {
+        NSLogColor([NSColor redColor], @"SetLogNameFormat: can't find ORDataFileModel!\n");
+        return; // (should never happen)
+    }
+    ORDataFileModel* aDataFileModel = [dataFileModels objectAtIndex:0];
+
+    // Check if the datafile name is defined. If ORCA has just started up, it won't be.
+    // By setting here all file IO will be available for the current run. Otherwise
+    // initialisation would only happen at the next run boundry.
+    if([[aDataFileModel fileName] isEqualToString:@""]){
+        NSLog(@"SNOPModel: There was no datafile name! Probably due to opening new ORCA. Correcting this now.\n");
+        [self setLogNameFormat]; // this should have already been called by awakeAfterDocumentLoaded, but do it here too for piece of mind
+        [aDataFileModel runTaskStarted:[runControl runInfo]];
     }
 }
 
@@ -2040,7 +2104,12 @@ static NSComparisonResult compareXL3s(ORXL3Model *xl3_1, ORXL3Model *xl3_2, void
                 [self parseSmellieRunFileDocs:aResult];
             } else if ([aTag isEqualToString:@"kTellieRunHeaderRetrieved"]) {
                 [self parseTellieRunFileDocs:aResult];
-            } else if ([aTag isEqualToString:@"Message"]) {
+            }
+            else if ([aTag isEqualToString:@"kAmellieRunHeaderRetrieved"])
+            {
+                [self parseAmellieRunFileDocs:aResult];
+            }
+            else if ([aTag isEqualToString:@"Message"]) {
                 [aResult prettyPrint:@"CouchDB Message:"];
             } else if ([aTag isEqualToString:@"kStandardRunPosted"]) {
                 /* Standard run was successfully posted. */
@@ -2284,6 +2353,45 @@ static NSComparisonResult compareXL3s(ORXL3Model *xl3_1, ORXL3Model *xl3_2, void
     [runFiles release];
 
     [[NSNotificationCenter defaultCenter] postNotificationName: @"TellieRunFilesLoaded" object:nil];
+}
+
+- (void) getAmellieRunFiles
+{
+    //Set TellieRunFiles to nil
+    [self setAmellieRunFiles:nil];
+
+    // Check there is an ELLIE model in the current configuration
+    NSArray*  ellieModels = [[(ORAppDelegate*)[NSApp delegate] document] collectObjectsOfClass:NSClassFromString(@"ELLIEModel")];
+    if(![ellieModels count]){
+        NSLogColor([NSColor redColor], @"Must have an ELLIE object in the configuration\n");
+        return;
+    }
+
+    ELLIEModel* anELLIEModel = [ellieModels objectAtIndex:0];
+    NSString *requestString = [NSString stringWithFormat:@"_design/runs/_view/run_plans"];
+
+    // This line calls [self couchDBresult], which in turn calls [self parseSmellieRunFileDocs] where the
+    // [self smellieRunFiles] property variable gets set.
+    [[anELLIEModel couchDBRef:self withDB:@"amellie"]  getDocumentId:requestString tag:@"kAmellieRunHeaderRetrieved"];
+}
+
+-(void) parseAmellieRunFileDocs:(id)aResult
+{
+    // Use the result returned from the tellie database query to fill a dictionary with all the available
+    // run file documents.
+    unsigned int nFiles = [[aResult objectForKey:@"rows"] count];
+    NSMutableDictionary *runFiles = [[NSMutableDictionary alloc] init];
+
+    for(int i=0;i<nFiles;i++){
+        NSMutableDictionary* amellieRunFileIterator = [[[aResult objectForKey:@"rows"] objectAtIndex:i] objectForKey:@"value"];
+        NSString *keyForAmellieDocs = [NSString stringWithFormat:@"%u",i];
+        [runFiles setObject:amellieRunFileIterator forKey:keyForAmellieDocs];
+    }
+
+    [self setAmellieRunFiles:runFiles];
+    [runFiles release];
+
+    [[NSNotificationCenter defaultCenter] postNotificationName: @"AmellieRunFilesLoaded" object:nil];
 }
 
 - (unsigned long) runTypeWord
