@@ -141,6 +141,7 @@ NSString* ORTubiiSettingsChangedNotification    = @"ORTubiiSettingsChangedNotifi
 
         //Connection must be made before port and host name are set.
         connection = [[RedisClient alloc] initWithHostName:strHostName withPort:portNumber];
+        [connection setTimeout:2]; // Added in attempt to connect
     }
     return self;
 }
@@ -951,7 +952,7 @@ NSString* ORTubiiSettingsChangedNotification    = @"ORTubiiSettingsChangedNotifi
             break;
         }
         
-        [NSThread sleepForTimeInterval:0.5];
+        [NSThread sleepForTimeInterval:5.0];
 
         // This is a very long running thread need to relase the pool every so often
         if(counter == 1000){
