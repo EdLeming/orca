@@ -952,7 +952,7 @@ NSString* ORTubiiSettingsChangedNotification    = @"ORTubiiSettingsChangedNotifi
             break;
         }
         
-        [NSThread sleepForTimeInterval:5.0];
+        [NSThread sleepForTimeInterval:0.5];
 
         // This is a very long running thread need to relase the pool every so often
         if(counter == 1000){
