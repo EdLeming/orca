@@ -184,7 +184,7 @@ NSString* ORTubiiSettingsChangedNotification    = @"ORTubiiSettingsChangedNotifi
 
 - (void) awakeAfterDocumentLoaded
 {
-    [self registerNotificationObservers];
+    //[self registerNotificationObservers];
     [self activateKeepAlive];
 }
 
